@@ -1,7 +1,7 @@
 import argparse
 import os
 import random
-
+random.seed(41)
 
 class PCFG:
     """
