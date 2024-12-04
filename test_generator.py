@@ -70,14 +70,14 @@ def check_vocab_size(file1,file2):
         print([x for x in tok_file1 if x not in tok_file2])
         print(f'the vocab size is different!!')
 if __name__ == '__main__':
-    for i in range(9):
+    for i in range(10):
         index = str(i)
         base_grammar_correct = f'data_gen/grammar42/grammar42/correct_{index}.tst'
         base_grammar_incorrect = f'data_gen/grammar42/grammar42/incorrect_{index}.tst'
-        permute_grammar_correct = f'data_gen/permute42/grammar42_permutation/correct_{index}.tst'
-        permute_grammar_incorrect = f'data_gen/permute42/grammar42_permutation/incorrect_{index}.tst'
+        permute_grammar_correct = f'data_gen/grammar42_permutation/grammar42_permutation/correct_{index}.tst'
+        permute_grammar_incorrect = f'data_gen/grammar42_permutation/grammar42_permutation/incorrect_{index}.tst'
         permutations = [x for x in Path(f'data_gen/grammar42/grammar42/{index}.trn').read_text().strip().split('\n')]
-        original = [x for x in Path(f'data_gen/permute42/grammar42_permutation/{index}.trn').read_text().strip().split('\n')]
+        original = [x for x in Path(f'data_gen/grammar42_permutation/grammar42_permutation/{index}.trn').read_text().strip().split('\n')]
         check_vocab_size(permutations, original)
         bigrams_permy, bigrams_permx = get_freq(get_bigrams(permutations), True)
         bigrams_origy, bigrams_origx = get_freq(get_bigrams(original), False)
