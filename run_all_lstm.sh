@@ -1,6 +1,7 @@
 #!/bin/bash
 
-for num in {0..9}; do
-    bash train_lm_lstm.sh grammar42 $num
-    bash train_lm_lstm.sh grammar42_permutation $num
+
+for num in {1..8}; do
+  bash train_lm_lstm.sh grammar42 $num
+  bash train_lm_lstm.sh grammar42_permutation $num
 done
