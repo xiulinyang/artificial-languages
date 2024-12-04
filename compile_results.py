@@ -39,14 +39,19 @@ for res in results_files:
 	perplexity_dict[grammar][test_dev].append(get_perplexity(res))
 
 output_file = open(args.output, 'w')
-fieldnames = ['grammar', 'dev_av', 'dev_sd', 'tst_av', 'tst_sd']
+
+fieldnames = ['grammar', 'dev_av', 'dev_sd', 'tst_av', 'tst_sd', 'correct_sd', 'correct_av', 'incorrect_sd', 'incorrect_av']
 writer = csv.DictWriter(output_file, fieldnames=fieldnames)
 writer.writeheader()
-for i in range(64):
-	grammar = format(i, '06b')
-	writer.writerow({'grammar':grammar, 
-		'dev_av':calc_mean(perplexity_dict[grammar]['dev']),
-		'dev_sd':calc_sd(perplexity_dict[grammar]['dev']),
-		'tst_av':calc_mean(perplexity_dict[grammar]['test']),
-		'tst_sd':calc_sd(perplexity_dict[grammar]['test'])
-		})
+
+grammar = args.folder.split('/')[-1]
+writer.writerow({'grammar':grammar,
+	'dev_av':calc_mean(perplexity_dict[grammar]['dev']),
+	'dev_sd':calc_sd(perplexity_dict[grammar]['dev']),
+	'tst_av':calc_mean(perplexity_dict[grammar]['test']),
+	'tst_sd':calc_sd(perplexity_dict[grammar]['test']),
+	'correct_av':calc_mean(perplexity_dict[grammar]['test']),
+	'correct_sd':calc_sd(perplexity_dict[grammar]['test']),
+	'incorrect_av':calc_mean(perplexity_dict[grammar]['test']),
+	'incorrect_sd':calc_sd(perplexity_dict[grammar]['test'])
+	})
