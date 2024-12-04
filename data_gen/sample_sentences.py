@@ -1,7 +1,8 @@
 import argparse
 import os
 import random
-random.seed(41)
+from logging import raiseExceptions
+
 
 class PCFG:
     """
@@ -26,8 +27,13 @@ class PCFG:
                 idx = -1
                 if len(l.rstrip().split("\t")) == 3:
                     weight, lhs, rhs = l.rstrip().split("\t")
+
                 elif len(l.rstrip().split("\t")) == 4:
                     weight, lhs, rhs, idx = l.rstrip().split("\t")
+
+                else:
+                    raise ValueError('The grammar is not acceptable!')
+
                 if lhs not in new_rules.keys():
                     new_rules[lhs] = []
                 poss_rhs = new_rules[lhs]
@@ -42,6 +48,8 @@ class PCFG:
                 rhs[1] /= total
         self.rules = new_rules
         self.change_rules = change
+        # print(new_rules)
+        # print(change)
 
     def sample_sentence(self, max_expansions, bracketing):
         self.expansions = 0
@@ -71,6 +79,7 @@ class PCFG:
                 if bracketing:
                     idx += 2
                 if self.expansions > max_expansions:
+                    print(f'max expansion {max_expansions}')
                     done = True
                 if idx >= len(sent):
                     done = True
@@ -82,6 +91,7 @@ class PCFG:
                 else:
                     if sent[idx] in self.rules.keys() and sent[idx - 1] != "(":
                         sent[idx] = "..."
+        # print(f'max expansion {max_expansions}')
         return ' '.join(sent)
 
     def expand(self, symbol):
@@ -90,8 +100,9 @@ class PCFG:
         val = 0.0
         rhs = ""
         idx = -1
-        for p in poss:
+        for i, p in enumerate(poss):
             val += p[1]
+            # print(p, sample, val)
             if sample <= val:
                 if symbol + "\t" + p[0] in self.change_rules.keys():
                     idx = self.change_rules[symbol + "\t" + p[0]]
@@ -99,12 +110,8 @@ class PCFG:
                 break
         return rhs.split(" "), idx
 
-def sample_sentences(grammar_file, n, m, output_folder, bracketing):
-    if not os.path.exists(output_folder):
-            os.mkdir(output_folder)        
-    grammar_name = grammar_file[:-3].split("/")[-1]
-    output_file = open(os.path.join(output_folder, 
-        "sample_" + grammar_name + ".txt") , 'w')
+def sample_sentences(grammar_file, n, m, output_path, bracketing):
+    output_file = open(os.path.join(output_path) , 'w')
     grammar = PCFG(grammar_file)
     for i in range(n):
         output_file.write(grammar.sample_sentence(m, bracketing) + "\n")
@@ -118,15 +125,18 @@ parser.add_argument("-G", "--grammar_folder", type=str, default='',
     help="Path to folder containing multiple grammar files")
 parser.add_argument("-n", "--number_samples", type=int, required=True, 
     help="Number of sentences to sample")
-parser.add_argument("-m", "--max_expansions", type=int, default=400, 
+parser.add_argument("-m", "--max_expansions", type=int, default=600,
     help="Max number of expansions performed")
 parser.add_argument("-O", "--output_folder", type=str, 
     help="Location of output files")
 parser.add_argument("-b", "--bracketing", type=bool, 
     help="Include bracketing of constituents")
+parser.add_argument("-s", "--random_seed", type=int,
+    help="Include bracketing of constituents")
 
 args = parser.parse_args()
-
+random_seed = args.random_seed
+random.seed(random_seed)
 if args.grammar_file == '' and args.grammar_folder == '':
     print("Please provide grammar files")
 elif args.grammar_file != '' and args.grammar_folder != '':

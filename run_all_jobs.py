@@ -1,6 +1,8 @@
 import subprocess
 import argparse
 
+
+
 parser = argparse.ArgumentParser(description="Run all jobs")
 
 parser.add_argument("-s", "--num_splits", type=int, default=10,

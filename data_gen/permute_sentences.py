@@ -4,19 +4,38 @@ import sys
 import random
 import copy
 
-def flip_as_needed(i, sentence):
-    to_flip = [j + 1 for j in range(6) if (i >> j) & 1 == 1]
+PATTERN_IDX = {
+    2 : ['-ed', '-s'],
+    3 : ['Det'],
+    4 : ['Prep'],
+}
+
+PERMUTATION = {
+    2: {'Vaff': ['-ed', '-s']},
+    3: {'Det': ['an', 'a', 'the', 'my', 'one']},
+    4: {'Prep': ['on', 'at', 'in', 'over', 'from']}
+}
+
+
+def flip_as_needed(sentence):
+    to_flip = [2,3,4]
     s_split = sentence.split(" ")
     for j in range(len(s_split)):
         if s_split[j][0].isnumeric():
             if int(s_split[j][0]) in to_flip:
-                reversed_end = reversed_children(s_split[j+1:])
+                reversed_end = reversed_children(s_split[j+1:],int(s_split[j][0]))
+
                 s_split = s_split[:j+1] + reversed_end
+                # print(s_split)
         else:
             continue
     return ' '.join(s_split).strip("\n")
 
-def reversed_children(sentence_part):
+def check_x(pattern_id, child):
+    overlap = [x for x in PATTERN_IDX[pattern_id] if x in child]
+    return overlap
+
+def reversed_children(sentence_part, flip_id):
     children = []
     bracket_stack = []
     L_brack = '('
@@ -37,10 +56,22 @@ def reversed_children(sentence_part):
                 break
         else:
             continue
-    children_reversed = []
-    for c in children[::-1]:
-        children_reversed += c
-    return children_reversed + sentence_part[children_end:]
+    children_updated = []
+    if len(children)!=1:
+        for child in children[::-1]:
+            children_updated += child
+
+    else:
+        for child in children:
+            if check_x(flip_id, child):
+                children_updated += child
+            else:
+                key = random.choice(list(PERMUTATION[flip_id].keys()))
+                value = random.choice(PERMUTATION[flip_id][key])
+
+                new_child = ['(', key, value, ')']
+                children_updated += new_child
+    return children_updated + sentence_part[children_end:]
 
 def remove_bracketing(s):
     new_s = []
@@ -57,10 +88,10 @@ def remove_bracketing(s):
     new_s.append(".")
     return ' '.join(new_s)
 
-def generate_sentence_file(i, sentences, output_file):
+def generate_sentence_file(sentences, output_file):
     output_f = open(output_file, 'w')
     for s in sentences:
-        output_f.write(remove_bracketing(flip_as_needed(i, s)) + "\n")
+        output_f.write(remove_bracketing(flip_as_needed(s)) + "\n")
     output_f.close()
 
 parser = argparse.ArgumentParser(description="Generate variants of sentences"
@@ -69,7 +100,7 @@ parser = argparse.ArgumentParser(description="Generate variants of sentences"
 parser.add_argument("-s", "--sentence_file", type=str, required=True, 
     help="Path to base sentence file")
 
-parser.add_argument("-O", "--output_folder", type=str, required=True,
+parser.add_argument("-o", "--output_path", type=str, required=True,
     help="Location of output folder")
 
 args = parser.parse_args()
@@ -77,10 +108,6 @@ args = parser.parse_args()
 file = open(args.sentence_file, 'r')
 sentences = file.readlines()
 
-for i in range(64):
-    if not os.path.exists(args.output_folder):
-        os.mkdir(args.output_folder) 
-    grammar_name = format(i, '06b')[::-1]
-    output_file = os.path.join(args.output_folder, 
-        "sample_" + grammar_name + ".txt")
-    generate_sentence_file(i, sentences, output_file)
+grammar_name = args.output_path
+output_file = os.path.join(grammar_name)
+generate_sentence_file(sentences, output_file)
