@@ -13,6 +13,7 @@ def remove_bracketing(s):
         else:
             new_s.append(split_s[i])
             i += 1
+    new_s.insert(0, 'BEGINNING')
     new_s.append(".\n")
     return ' '.join(new_s)
 
