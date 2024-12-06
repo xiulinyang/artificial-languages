@@ -7,7 +7,7 @@ CLOSEDCLASS = ['on', 'at', 'in', 'over', 'from', 'an', 'a', 'the', 'my', 'one', 
 
 
 def get_bigrams(sents):
-    bigrams = [b for l in sents for b in zip(l.split(" ")[:-1], l.split(" ")[1:])]
+    bigrams = [b for l in sents for b in zip(l.split(" ")[1:-1], l.split(" ")[2:])]
     bigram_perm = ['_'.join(list(x)) for x in bigrams]
 
     return bigram_perm
@@ -72,12 +72,12 @@ def check_vocab_size(file1,file2):
 if __name__ == '__main__':
     for i in range(10):
         index = str(i)
-        base_grammar_correct = f'data_gen/grammar42/grammar42/correct_{index}.tst'
-        base_grammar_incorrect = f'data_gen/grammar42/grammar42/incorrect_{index}.tst'
-        permute_grammar_correct = f'data_gen/grammar42_permutation/grammar42_permutation/correct_{index}.tst'
-        permute_grammar_incorrect = f'data_gen/grammar42_permutation/grammar42_permutation/incorrect_{index}.tst'
-        permutations = [x for x in Path(f'data_gen/grammar42/grammar42/{index}.trn').read_text().strip().split('\n')]
-        original = [x for x in Path(f'data_gen/grammar42_permutation/grammar42_permutation/{index}.trn').read_text().strip().split('\n')]
+        base_grammar_correct = f'data_gen/grammar42exp2/grammar42exp2/correct_{index}.tst'
+        base_grammar_incorrect = f'data_gen/grammar42exp2/grammar42exp2/incorrect_{index}.tst'
+        permute_grammar_correct = f'data_gen/grammar42exp2_permutation/grammar42exp2_permutation/correct_{index}.tst'
+        permute_grammar_incorrect = f'data_gen/grammar42exp2_permutation/grammar42exp2_permutation/incorrect_{index}.tst'
+        permutations = [x for x in Path(f'data_gen/grammar42exp2/grammar42exp2/{index}.trn').read_text().strip().split('\n')]
+        original = [x for x in Path(f'data_gen/grammar42exp2_permutation/grammar42exp2_permutation/{index}.trn').read_text().strip().split('\n')]
         check_vocab_size(permutations, original)
         bigrams_permy, bigrams_permx = get_freq(get_bigrams(permutations), True)
         bigrams_origy, bigrams_origx = get_freq(get_bigrams(original), False)
