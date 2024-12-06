@@ -72,12 +72,12 @@ def check_vocab_size(file1,file2):
 if __name__ == '__main__':
     for i in range(10):
         index = str(i)
-        base_grammar_correct = f'data_gen/grammar42exp2/grammar42exp2/correct_{index}.tst'
-        base_grammar_incorrect = f'data_gen/grammar42exp2/grammar42exp2/incorrect_{index}.tst'
-        permute_grammar_correct = f'data_gen/grammar42exp2_permutation/grammar42exp2_permutation/correct_{index}.tst'
-        permute_grammar_incorrect = f'data_gen/grammar42exp2_permutation/grammar42exp2_permutation/incorrect_{index}.tst'
-        permutations = [x for x in Path(f'data_gen/grammar42exp2/grammar42exp2/{index}.trn').read_text().strip().split('\n')]
-        original = [x for x in Path(f'data_gen/grammar42exp2_permutation/grammar42exp2_permutation/{index}.trn').read_text().strip().split('\n')]
+        base_grammar_correct = f'data_gen/grammar42exp1/grammar42exp1/correct_{index}.tst'
+        base_grammar_incorrect = f'data_gen/grammar42exp1/grammar42exp1/incorrect_{index}.tst'
+        permute_grammar_correct = f'data_gen/grammar42exp1_permutation/grammar42exp1_permutation/correct_{index}.tst'
+        permute_grammar_incorrect = f'data_gen/grammar42exp1_permutation/grammar42exp1_permutation/incorrect_{index}.tst'
+        permutations = [x for x in Path(f'data_gen/grammar42exp1/grammar42exp1/{index}.trn').read_text().strip().split('\n')]
+        original = [x for x in Path(f'data_gen/grammar42exp1_permutation/grammar42exp1_permutation/{index}.trn').read_text().strip().split('\n')]
         check_vocab_size(permutations, original)
         bigrams_permy, bigrams_permx = get_freq(get_bigrams(permutations), True)
         bigrams_origy, bigrams_origx = get_freq(get_bigrams(original), False)
